@@ -1,31 +1,94 @@
-# TaskMaster
+<p align="center">
+  <img src="docs/banner.svg" alt="TaskMaster" width="600">
+</p>
 
-**TaskMaster** es una aplicación de gestión de tareas moderna, portable y fácil de usar. No requiere instalación de Python ni conocimientos técnicos.
+<h1 align="center">TaskMaster <img alt="Checklist" src="https://img.shields.io/badge/-v1.0.0-4caf50?style=flat-square&logo=todoist&logoColor=white"></h1>
 
-## 🚀 ¿Cómo usar?
-
-1. **Descarga y ejecuta `TaskMaster.exe`**
-   - No requiere instalación.
-   - La base de datos se guarda localmente en la misma carpeta.
-
-2. **¡Listo!**
-   - Se abrirá una ventana de la aplicación donde podrás crear, organizar y filtrar tus tareas.
-   - Puedes crear carpetas, cambiar el idioma (inglés/español), y todo se guarda automáticamente.
-
-
-## ℹ️ Requisitos
-
-- Windows 10/11 (con Microsoft Edge instalado, la mayoría de PCs ya lo tienen).
-- No requiere conexión a internet para funcionar.
-
-## 🗑️ ¿Cómo desinstalar?
-
-- Simplemente borra la carpeta donde está el ejecutable y la base de datos (`todos.db`).
-
-## 📦 ¿Cómo compartir?
-
-- Puedes copiar el archivo `TaskMaster.exe` y la carpeta `templates` a cualquier otra PC con Windows.
+<p align="center">
+  A modern, portable and delightfully simple task-management app.<br>
+  <b>No Python installation, no command line—just double-click and start working.</b>
+</p>
 
 ---
 
-**¡Disfruta organizando tus tareas con TaskMaster!**
+## ✨ Key Features
+- 📁 **Folder-based organisation** – Create, rename, delete and re-order folders any time.  
+- 🔀 **Organize tasks** – Move tasks between folders from a floating, scrollable menu.  
+- 🔍 **Real-time filter & search** – Filter by folder, status or free-text. Results update instantly.  
+- 🌐 **Multi-language** – Switch between English and Spanish with one click.  
+- 📊 **Progress indicators** – Each folder shows a progress bar and a “tasks remaining” counter.  
+- 📱 **Responsive UI** – Clean, modern and mobile-friendly.  
+- 💾 **Truly portable** – All data lives next to the executable (`todos.db`).  
+- 🗑 **Safe deletion** – Confirmation dialogs protect you from accidental data loss.  
+- 📝 **Smart limits & tooltips** – Long texts are gently truncated to keep the layout tidy.  
+- 🖥 **Native window** – Runs in its own window via `pywebview`, not in a browser tab.  
+
+---
+
+## 📸 Sneak Peek
+<!-- Replace with an actual screenshot or GIF -->
+<p align="center">
+  <img src="docs/screenshot.png" alt="TaskMaster screenshot" width="700">
+</p>
+
+---
+
+## 📚 Table of Contents
+1. [Getting Started](#-getting-started)
+2. [Project Structure](#-project-structure)
+3. [Tech Stack](#-tech-stack)
+4. [Requirements](#️-requirements)
+5. [Uninstall](#-uninstall)
+6. [License](#license)
+
+---
+
+## 🚀 Getting Started
+
+1. **Download `TaskMaster.exe`**  
+   No installer, no admin rights—just grab the file from the latest
+   [release](https://github.com/your-repo/TaskMaster/releases) and place it anywhere you like.
+
+2. **Run it**  
+   Double-click `TaskMaster.exe`. A window appears instantly and a local SQLite
+   database (`todos.db`) is created beside it.
+
+3. **Start organising**  
+   Create folders, add tasks — all changes are saved automatically.
+
+---
+
+## 🗂️ Project Structure
+```text
+TMApp/
+├── app.py            # Flask backend + pywebview launcher
+├── requirements.txt  # Python dependencies
+├── taskmaster.ico    # Application icon
+├── TaskMaster-Release/
+│   └── TaskMaster.exe   # EXECUTABLE APP
+├── templates/
+│   └── index.html    # Front-end (HTML / CSS / JS)
+└── README.md         # You're reading it!
+```
+
+## 🔧 Tech Stack
+`Flask` - Backend web framework
+`pywebview` - Native window for web apps
+[HTML/CSS/JS] - Frontend (in `templates/index.html`)
+
+## ℹ️ Requirements
+
+- Windows 10/11
+- No internet connection required
+
+## 🗑️ Uninstall
+
+- Delete the folder that contains `TaskMaster.exe` and `todos.db`. Nothing is left
+behind in the registry or elsewhere.
+
+## License
+TaskMaster is released under the MIT License – see LICENSE for details.
+
+---
+
+**🎉Enjoy organizing your tasks with TaskMaster!🎉**
