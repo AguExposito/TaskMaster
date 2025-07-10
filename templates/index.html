@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster - Task Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 8px 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .language-btn.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        select, input[type="text"] {
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+            min-width: 120px;
+            max-width: 100%;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .add-todo-form {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr) auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #555;
+            border: 2px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .folders-section {
+            padding: 20px 30px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .folders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .folder-card {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .folder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .folder-card.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .folder-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .folder-name, .todo-title, .todo-description {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: unset !important;
+            display: block !important;
+            word-break: break-word;
+            max-width: 100%;
+        }
+        .folder-name {
+            max-width: 200px;
+        }
+        .todo-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .todo-description {
+            color: #6c757d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .folder-count {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .folder-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+        }
+
+        .folder-card:hover .folder-actions {
+            display: block;
+        }
+
+        .folder-actions button {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #dc3545;
+        }
+
+        .add-folder-btn {
+            background: #e9ecef;
+            border: 2px dashed #adb5bd;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .add-folder-btn:hover {
+            background: #dee2e6;
+            border-color: #6c757d;
+        }
+
+        .todos-container {
+            padding: 30px;
+        }
+
+        .todo-item {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .todo-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .todo-item.completed {
+            background: #f8f9fa;
+            border-color: #28a745;
+        }
+
+        .todo-item.completed .todo-title {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .todo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .todo-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .priority-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .priority-medium {
+            background: #feca57;
+            color: #333;
+        }
+
+        .priority-low {
+            background: #48dbfb;
+            color: white;
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .folder-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .add-todo-form {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .todo-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .todo-actions {
+                margin-left: 0;
+                justify-content: flex-end;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .folders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .todo-title, .todo-description {
+                font-size: 1rem;
+                max-width: 100%;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .notification.info {
+            background: #17a2b8;
+        }
+
+        /* Limitar ancho del select de carpetas en el formulario de tareas */
+        #todo-folder {
+            max-width: 170px;
+            min-width: 100px;
+            width: 100%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: block;
+        }
+        /* Truncar visualmente las opciones del select */
+        #todo-folder option {
+            max-width: 170px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Asegurar que el dropdown de mover tarea esté por encima de la tarjeta y otros elementos */
+        .move-folder-dropdown {
+            z-index: 9999 !important;
+            pointer-events: none;
+        }
+        .move-folder-dropdown[style*='display: block'],
+        .move-folder-dropdown[style*='display:block'] {
+            pointer-events: auto;
+        }
+        /* Evitar que el overflow de la tarjeta o contenedores oculte el menú */
+        .todo-item, .todos-container {
+            overflow: visible !important;
+        }
+
+        /* Menú flotante global para mover tarea */
+        .move-folder-global-dropdown {
+            position: absolute;
+            left: 0;
+            top: 0;
+            min-width: 180px;
+            background: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+            border-radius: 8px;
+            z-index: 99999;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 6px 0;
+            animation: fadeIn 0.18s;
+        }
+        .move-folder-global-dropdown .move-folder-option {
+            padding: 8px 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .move-folder-global-dropdown .move-folder-option:hover {
+            background: #f0f0fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="language-switcher">
+                <button class="language-btn active" data-lang="en">EN</button>
+                <button class="language-btn" data-lang="es">ES</button>
+            </div>
+            <h1><i class="fas fa-tasks"></i> <span data-i18n="title">TaskMaster</span></h1>
+            <p data-i18n="subtitle">Manage your tasks efficiently and organized</p>
+        </div>
+
+        <div class="main-content">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="total-todos">0</span>
+                    <span class="stat-label" data-i18n="stats.total">Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="completed-todos">0</span>
+                    <span class="stat-label" data-i18n="stats.completed">Completed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="pending-todos">0</span>
+                    <span class="stat-label" data-i18n="stats.pending">Pending</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="completion-rate">0%</span>
+                    <span class="stat-label" data-i18n="stats.progress">Progress</span>
+                </div>
+            </div>
+
+            <div class="folders-section">
+                <div class="folders-header">
+                    <h3 data-i18n="folders.title">Folders</h3>
+                    <button class="btn btn-primary" onclick="todoApp.showAddFolderModal()">
+                        <i class="fas fa-folder-plus"></i>
+                        <span data-i18n="folders.add">Add Folder</span>
+                    </button>
+                </div>
+                <div class="folders-grid" id="folders-grid">
+                    <!-- Folders will be loaded here -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label data-i18n="filters.status">Status:</label>
+                        <select id="status-filter">
+                            <option value="all" data-i18n="filters.all">All</option>
+                            <option value="pending" data-i18n="filters.pending">Pending</option>
+                            <option value="completed" data-i18n="filters.completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label data-i18n="filters.category">Category:</label>
+                        <select id="category-filter">
+                            <option value="all" data-i18n="filters.all">All</option>
+                            <option value="work" data-i18n="categories.work">Work</option>
+                            <option value="personal" data-i18n="categories.personal">Personal</option>
+                            <option value="study" data-i18n="categories.study">Study</option>
+                            <option value="health" data-i18n="categories.health">Health</option>
+                            <option value="general" data-i18n="categories.general">General</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label data-i18n="filters.folder">Folder:</label>
+                        <select id="folder-filter">
+                            <option value="all" data-i18n="filters.all">All</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label data-i18n="filters.search">Search:</label>
+                        <input type="text" id="search-input" data-i18n-placeholder="filters.search_placeholder">
+                    </div>
+                </div>
+
+                <form class="add-todo-form" id="add-todo-form">
+                    <div class="form-group">
+                        <label data-i18n="form.title">Title</label>
+                        <input type="text" id="todo-title" data-i18n-placeholder="form.title_placeholder" required maxlength="60">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="form.description">Description</label>
+                        <input type="text" id="todo-description" data-i18n-placeholder="form.description_placeholder" maxlength="80">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="form.priority">Priority</label>
+                        <select id="todo-priority">
+                            <option value="low" data-i18n="priority.low">Low</option>
+                            <option value="medium" selected data-i18n="priority.medium">Medium</option>
+                            <option value="high" data-i18n="priority.high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="form.category">Category</label>
+                        <select id="todo-category">
+                            <option value="general" selected data-i18n="categories.general">General</option>
+                            <option value="work" data-i18n="categories.work">Work</option>
+                            <option value="personal" data-i18n="categories.personal">Personal</option>
+                            <option value="study" data-i18n="categories.study">Study</option>
+                            <option value="health" data-i18n="categories.health">Health</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="form.folder">Folder</label>
+                        <select id="todo-folder">
+                            <option value="1" selected>General</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span data-i18n="form.add">Add</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="todos-container" id="todos-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p data-i18n="loading">Loading tasks...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Folder Modal -->
+    <div id="add-folder-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="folders.add_title">Add New Folder</h3>
+                <span class="close" onclick="todoApp.closeModal('add-folder-modal')">&times;</span>
+            </div>
+            <form id="add-folder-form">
+                <div class="form-group">
+                    <label data-i18n="folders.name">Folder Name</label>
+                    <input type="text" id="folder-name" required maxlength="40">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="folders.color">Color</label>
+                    <input type="color" id="folder-color" value="#667eea">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="todoApp.closeModal('add-folder-modal')" data-i18n="common.cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="common.save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <script>
+        // Language translations
+        const translations = {
+            en: {
+                title: "TaskMaster",
+                subtitle: "Manage your tasks efficiently and organized",
+                stats: {
+                    total: "Total",
+                    completed: "Completed",
+                    pending: "Pending",
+                    progress: "Progress"
+                },
+                folders: {
+                    title: "Folders",
+                    add: "Add Folder",
+                    add_title: "Add New Folder",
+                    name: "Folder Name",
+                    color: "Color"
+                },
+                filters: {
+                    status: "Status:",
+                    category: "Category:",
+                    folder: "Folder:",
+                    search: "Search:",
+                    search_placeholder: "Search tasks...",
+                    all: "All",
+                    pending: "Pending",
+                    completed: "Completed"
+                },
+                categories: {
+                    work: "Work",
+                    personal: "Personal",
+                    study: "Study",
+                    health: "Health",
+                    general: "General"
+                },
+                priority: {
+                    low: "Low",
+                    medium: "Medium",
+                    high: "High"
+                },
+                form: {
+                    title: "Title",
+                    title_placeholder: "What do you need to do?",
+                    description: "Description",
+                    description_placeholder: "Optional description",
+                    priority: "Priority",
+                    category: "Category",
+                    folder: "Folder",
+                    add: "Add"
+                },
+                actions: {
+                    complete: "Complete",
+                    uncomplete: "Uncomplete",
+                    delete: "Delete",
+                    toggle: "Toggle"
+                },
+                common: {
+                    cancel: "Cancel",
+                    save: "Save",
+                    loading: "Loading tasks...",
+                    tasks: "tasks"
+                },
+                empty: {
+                    title: "No tasks",
+                    message: "Add your first task to get started!"
+                },
+                errors: {
+                    no_folders: "You must create at least one folder before adding tasks",
+                    no_folders_title: "No folders available",
+                    no_folders_message: "Create your first folder to start adding tasks!"
+                },
+                confirmations: {
+                    delete_folder: "Are you sure you want to delete this folder? All tasks inside this folder will also be deleted."
+                },
+                success: {
+                    folder_deleted: "Folder and all its tasks deleted successfully"
+                }
+            },
+            es: {
+                title: "TaskMaster",
+                subtitle: "Gestiona tus tareas de manera eficiente y organizada",
+                stats: {
+                    total: "Total",
+                    completed: "Completadas",
+                    pending: "Pendientes",
+                    progress: "Progreso"
+                },
+                folders: {
+                    title: "Carpetas",
+                    add: "Agregar Carpeta",
+                    add_title: "Agregar Nueva Carpeta",
+                    name: "Nombre de la Carpeta",
+                    color: "Color"
+                },
+                filters: {
+                    status: "Estado:",
+                    category: "Categoría:",
+                    folder: "Carpeta:",
+                    search: "Buscar:",
+                    search_placeholder: "Buscar tareas...",
+                    all: "Todas",
+                    pending: "Pendientes",
+                    completed: "Completadas"
+                },
+                categories: {
+                    work: "Trabajo",
+                    personal: "Personal",
+                    study: "Estudio",
+                    health: "Salud",
+                    general: "General"
+                },
+                priority: {
+                    low: "Baja",
+                    medium: "Media",
+                    high: "Alta"
+                },
+                form: {
+                    title: "Título",
+                    title_placeholder: "¿Qué necesitas hacer?",
+                    description: "Descripción",
+                    description_placeholder: "Descripción opcional",
+                    priority: "Prioridad",
+                    category: "Categoría",
+                    folder: "Carpeta",
+                    add: "Agregar"
+                },
+                actions: {
+                    complete: "Completar",
+                    uncomplete: "Desmarcar",
+                    delete: "Eliminar",
+                    toggle: "Cambiar"
+                },
+                common: {
+                    cancel: "Cancelar",
+                    save: "Guardar",
+                    loading: "Cargando tareas...",
+                    tasks: "tareas"
+                },
+                empty: {
+                    title: "No hay tareas",
+                    message: "¡Agrega tu primera tarea para comenzar!"
+                },
+                errors: {
+                    no_folders: "Debes crear al menos una carpeta antes de agregar tareas",
+                    no_folders_title: "No hay carpetas disponibles",
+                    no_folders_message: "¡Crea tu primera carpeta para comenzar a agregar tareas!"
+                },
+                confirmations: {
+                    delete_folder: "¿Estás seguro de que quieres eliminar esta carpeta? Todas las tareas dentro de esta carpeta también se eliminarán."
+                },
+                success: {
+                    folder_deleted: "Carpeta y todas sus tareas eliminadas exitosamente"
+                }
+            }
+        };
+
+        class TodoApp {
+            constructor() {
+                this.todos = [];
+                this.folders = [];
+                this.currentLanguage = 'en';
+                this.filters = {
+                    status: 'all',
+                    category: 'all',
+                    folder: 'all',
+                    search: ''
+                };
+                this.init();
+            }
+
+            init() {
+                this.setupLanguageSwitcher();
+                this.bindEvents();
+                this.loadFolders();
+                this.loadTodos();
+                this.loadStats();
+            }
+
+            setupLanguageSwitcher() {
+                const langButtons = document.querySelectorAll('.language-btn');
+                langButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const lang = btn.dataset.lang;
+                        this.setLanguage(lang);
+                        
+                        // Update active button
+                        langButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+            }
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                document.documentElement.lang = lang;
+                
+                // Update all translatable elements
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.dataset.i18n;
+                    const keys = key.split('.');
+                    let value = translations[lang];
+                    keys.forEach(k => {
+                        value = value[k];
+                    });
+                    if (value) {
+                        element.textContent = value;
+                    }
+                });
+
+                // Update placeholders
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                    const key = element.dataset.i18nPlaceholder;
+                    const keys = key.split('.');
+                    let value = translations[lang];
+                    keys.forEach(k => {
+                        value = value[k];
+                    });
+                    if (value) {
+                        element.placeholder = value;
+                    }
+                });
+
+                // Update dynamic content that was created after page load
+                this.updateDynamicTranslations();
+            }
+
+            updateDynamicTranslations() {
+                // Update "Add Folder" button in folders grid
+                const addFolderBtn = document.querySelector('.add-folder-btn div');
+                if (addFolderBtn) {
+                    addFolderBtn.textContent = translations[this.currentLanguage].folders.add;
+                }
+
+                // Update folder count text
+                document.querySelectorAll('.folder-count').forEach(element => {
+                    const count = element.textContent.split(' ')[0];
+                    element.textContent = `${count} ${translations[this.currentLanguage].common.tasks}`;
+                });
+
+                // Update empty state messages
+                const emptyState = document.querySelector('.empty-state');
+                if (emptyState && this.todos.length === 0 && this.folders.length > 0) {
+                    const title = emptyState.querySelector('h3');
+                    const message = emptyState.querySelector('p');
+                    if (title) title.textContent = translations[this.currentLanguage].empty.title;
+                    if (message) message.textContent = translations[this.currentLanguage].empty.message;
+                }
+
+                // Update no folders message
+                const noFoldersState = document.querySelector('.empty-state');
+                if (noFoldersState && this.folders.length === 0) {
+                    const title = noFoldersState.querySelector('h3');
+                    const message = noFoldersState.querySelector('p');
+                    if (title) title.textContent = translations[this.currentLanguage].errors.no_folders_title;
+                    if (message) message.textContent = translations[this.currentLanguage].errors.no_folders_message;
+                }
+            }
+
+            bindEvents() {
+                // Form submission
+                document.getElementById('add-todo-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addTodo();
+                });
+
+                // Add folder form
+                document.getElementById('add-folder-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addFolder();
+                });
+
+                // Filters (EN TIEMPO REAL)
+                document.getElementById('status-filter').addEventListener('change', (e) => {
+                    this.filters.status = e.target.value;
+                    this.loadTodos();
+                });
+
+                document.getElementById('category-filter').addEventListener('change', (e) => {
+                    this.filters.category = e.target.value;
+                    this.loadTodos();
+                });
+
+                document.getElementById('folder-filter').addEventListener('change', (e) => {
+                    this.filters.folder = e.target.value;
+                    this.loadTodos();
+                });
+
+                document.getElementById('search-input').addEventListener('input', (e) => {
+                    this.filters.search = e.target.value;
+                    this.loadTodos();
+                });
+
+                // Menú global para mover tarea entre folders
+                document.getElementById('todos-container').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('move-folder-btn')) {
+                        const todoId = e.target.getAttribute('data-todo-id');
+                        const btn = e.target;
+                        // Eliminar cualquier menú abierto
+                        document.querySelectorAll('.move-folder-global-dropdown').forEach(d => d.remove());
+                        // Construir menú
+                        const todo = this.todos.find(t => t.id == todoId);
+                        const folders = this.folders.filter(f => f.id !== todo.folder_id);
+                        const menu = document.createElement('div');
+                        menu.className = 'move-folder-global-dropdown';
+                        if (folders.length === 0) {
+                            menu.innerHTML = `<div style='padding:8px 18px; color:#aaa;'>${translations[this.currentLanguage].folders.title}</div>`;
+                        } else {
+                            menu.innerHTML = folders.map(folder =>
+                                `<div class='move-folder-option' data-folder-id='${folder.id}'>${this.escapeHtml(folder.name)}</div>`
+                            ).join('');
+                        }
+                        document.body.appendChild(menu);
+                        // Posicionar menú
+                        const rect = btn.getBoundingClientRect();
+                        let top = rect.bottom + window.scrollY;
+                        let left = rect.left + window.scrollX;
+                        // Si se sale por abajo, mostrar hacia arriba
+                        if (top + menu.offsetHeight > window.innerHeight + window.scrollY) {
+                            top = rect.top + window.scrollY - menu.offsetHeight;
+                        }
+                        // Si se sale por la derecha, ajustar
+                        if (left + menu.offsetWidth > window.innerWidth + window.scrollX) {
+                            left = window.innerWidth + window.scrollX - menu.offsetWidth - 10;
+                        }
+                        menu.style.top = top + 'px';
+                        menu.style.left = left + 'px';
+                    }
+                    if (e.target.classList.contains('move-folder-option')) {
+                        const todoId = document.querySelector('.move-folder-global-dropdown').previousMenuBtnId;
+                        const newFolderId = e.target.getAttribute('data-folder-id');
+                        this.moveTodoToFolder(todoId, newFolderId);
+                        document.querySelectorAll('.move-folder-global-dropdown').forEach(d => d.remove());
+                        e.stopPropagation();
+                    }
+                });
+                // Guardar referencia al botón para saber a qué tarea corresponde el menú
+                document.body.addEventListener('mousedown', (e) => {
+                    const menu = document.querySelector('.move-folder-global-dropdown');
+                    if (menu && e.target.classList.contains('move-folder-btn')) {
+                        menu.previousMenuBtnId = e.target.getAttribute('data-todo-id');
+                    }
+                });
+                // Cerrar menú al hacer click fuera
+                document.body.addEventListener('mousedown', (e) => {
+                    if (!e.target.classList.contains('move-folder-global-dropdown') && !e.target.classList.contains('move-folder-option') && !e.target.classList.contains('move-folder-btn')) {
+                        document.querySelectorAll('.move-folder-global-dropdown').forEach(d => d.remove());
+                    }
+                });
+            }
+
+            async loadFolders() {
+                try {
+                    const response = await fetch('/api/folders');
+                    this.folders = await response.json();
+                    this.renderFolders();
+                    this.updateFolderSelects();
+                    this.updateDynamicTranslations();
+                } catch (error) {
+                    this.showNotification('Error loading folders', 'error');
+                }
+            }
+
+            renderFolders() {
+                const grid = document.getElementById('folders-grid');
+                grid.innerHTML = '';
+
+                this.folders.forEach(folder => {
+                    const folderCard = document.createElement('div');
+                    folderCard.className = 'folder-card';
+                    folderCard.style.borderLeftColor = folder.color;
+                    folderCard.style.borderLeftWidth = '4px';
+                    folderCard.onclick = () => this.selectFolder(folder.id);
+
+                    // Truncar el nombre del folder una letra antes (máx 13) y tooltip
+                    let folderNameDisplay = folder.name;
+                    if (folderNameDisplay.length > 13) {
+                        folderNameDisplay = folderNameDisplay.slice(0, 12) + '...';
+                    }
+
+                    // Calcular progreso visual
+                    const total = folder.todo_count;
+                    const completed = folder.completed_count || 0;
+                    const pending = total - completed;
+                    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                    folderCard.innerHTML = `
+                        <div class="folder-icon" style="color: ${folder.color}">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="folder-name" title="${this.escapeHtml(folder.name)}">${this.escapeHtml(folderNameDisplay)}</div>
+                        <div class="folder-progress-bar" style="background: #eee; border-radius: 6px; height: 10px; margin: 10px 0 6px 0; width: 100%; overflow: hidden;">
+                            <div style="width: ${percent}%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 6px;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95em;">
+                            <span title="${percent}% completado"><i class='fas fa-check-circle' style='color:#28a745;'></i> ${percent}%</span>
+                            <span title="${pending} pendientes"><i class='fas fa-tasks' style='color:#dc3545;'></i> ${pending}</span>
+                        </div>
+                        <div class="folder-count">${folder.todo_count} ${translations[this.currentLanguage].common.tasks}</div>
+                        <div class="folder-actions">
+                            <button onclick="event.stopPropagation(); todoApp.deleteFolder(${folder.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    grid.appendChild(folderCard);
+                });
+
+                // Add "Add Folder" card
+                const addCard = document.createElement('div');
+                addCard.className = 'add-folder-btn';
+                addCard.onclick = () => this.showAddFolderModal();
+                addCard.innerHTML = `
+                    <i class="fas fa-plus" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <div>${translations[this.currentLanguage].folders.add}</div>
+                `;
+                grid.appendChild(addCard);
+            }
+
+            updateFolderSelects() {
+                const todoFolderSelect = document.getElementById('todo-folder');
+                const filterFolderSelect = document.getElementById('folder-filter');
+                const addTodoForm = document.getElementById('add-todo-form');
+
+                // Clear existing options except "All" for filter
+                todoFolderSelect.innerHTML = '';
+                filterFolderSelect.innerHTML = '<option value="all">All</option>';
+
+                if (this.folders.length === 0) {
+                    // No folders available
+                    todoFolderSelect.innerHTML = '<option value="" disabled>No folders available</option>';
+                    filterFolderSelect.innerHTML = '<option value="all">All</option>';
+                    
+                    // Disable the form
+                    addTodoForm.style.opacity = '0.5';
+                    addTodoForm.style.pointerEvents = 'none';
+                    
+                    // Show message in todos container
+                    const container = document.getElementById('todos-container');
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>${translations[this.currentLanguage].errors.no_folders_title}</h3>
+                            <p>${translations[this.currentLanguage].errors.no_folders_message}</p>
+                        </div>
+                    `;
+                } else {
+                    // Enable the form
+                    addTodoForm.style.opacity = '1';
+                    addTodoForm.style.pointerEvents = 'auto';
+
+                    this.folders.forEach(folder => {
+                        const todoOption = document.createElement('option');
+                        todoOption.value = folder.id;
+                        todoOption.textContent = folder.name;
+                        todoFolderSelect.appendChild(todoOption);
+
+                        const filterOption = document.createElement('option');
+                        filterOption.value = folder.id;
+                        filterOption.textContent = folder.name;
+                        filterFolderSelect.appendChild(filterOption);
+                    });
+                }
+            }
+
+            selectFolder(folderId) {
+                // Update folder filter
+                document.getElementById('folder-filter').value = folderId;
+                this.filters.folder = folderId;
+                this.loadTodos();
+
+                // Update visual selection
+                document.querySelectorAll('.folder-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                event.currentTarget.classList.add('active');
+            }
+
+            showAddFolderModal() {
+                document.getElementById('add-folder-modal').style.display = 'block';
+            }
+
+            closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+
+            async addFolder() {
+                const name = document.getElementById('folder-name').value.trim();
+                const color = document.getElementById('folder-color').value;
+
+                if (!name) return;
+
+                try {
+                    const response = await fetch('/api/folders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name,
+                            color
+                        })
+                    });
+
+                    if (response.ok) {
+                        document.getElementById('folder-name').value = '';
+                        document.getElementById('folder-color').value = '#667eea';
+                        this.closeModal('add-folder-modal');
+                        this.loadFolders();
+                        this.showNotification('Folder created successfully', 'success');
+                    } else {
+                        throw new Error('Error creating folder');
+                    }
+                } catch (error) {
+                    this.showNotification('Error creating folder', 'error');
+                }
+            }
+
+            async deleteFolder(folderId) {
+                if (!confirm(translations[this.currentLanguage].confirmations.delete_folder)) return;
+
+                try {
+                    const response = await fetch(`/api/folders/${folderId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        this.loadFolders();
+                        this.loadTodos();
+                        this.loadStats();
+                        this.showNotification(translations[this.currentLanguage].success.folder_deleted, 'success');
+                    } else {
+                        throw new Error('Error deleting folder');
+                    }
+                } catch (error) {
+                    this.showNotification('Error deleting folder', 'error');
+                }
+            }
+
+            async loadTodos() {
+                try {
+                    const params = new URLSearchParams();
+                    if (this.filters.status !== 'all') params.append('status', this.filters.status);
+                    if (this.filters.category !== 'all') params.append('category', this.filters.category);
+                    if (this.filters.folder !== 'all') params.append('folder', this.filters.folder);
+                    if (this.filters.search) params.append('search', this.filters.search);
+
+                    const response = await fetch(`/api/todos?${params}`);
+                    this.todos = await response.json();
+                    this.renderTodos();
+                } catch (error) {
+                    this.showNotification('Error loading tasks', 'error');
+                }
+            }
+
+            async loadStats() {
+                try {
+                    const response = await fetch('/api/stats');
+                    const stats = await response.json();
+                    
+                    document.getElementById('total-todos').textContent = stats.total;
+                    document.getElementById('completed-todos').textContent = stats.completed;
+                    document.getElementById('pending-todos').textContent = stats.pending;
+                    
+                    const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+                    document.getElementById('completion-rate').textContent = `${completionRate}%`;
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+
+            async addTodo() {
+                const title = document.getElementById('todo-title').value.trim();
+                const description = document.getElementById('todo-description').value.trim();
+                const priority = document.getElementById('todo-priority').value;
+                const category = document.getElementById('todo-category').value;
+                const folderId = document.getElementById('todo-folder').value;
+
+                if (!title) return;
+
+                // Validar que existan carpetas
+                if (this.folders.length === 0) {
+                    this.showNotification(translations[this.currentLanguage].errors.no_folders, 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/todos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title,
+                            description,
+                            priority,
+                            category,
+                            folder_id: parseInt(folderId)
+                        })
+                    });
+
+                    if (response.ok) {
+                        document.getElementById('add-todo-form').reset();
+                        document.getElementById('todo-priority').value = 'medium';
+                        document.getElementById('todo-category').value = 'general';
+                        document.getElementById('todo-folder').value = '1';
+                        this.loadTodos();
+                        this.loadStats();
+                        this.loadFolders();
+                        this.showNotification('Task added successfully', 'success');
+                    } else {
+                        throw new Error('Error adding task');
+                    }
+                } catch (error) {
+                    this.showNotification('Error adding task', 'error');
+                }
+            }
+
+            async toggleTodo(id) {
+                try {
+                    const response = await fetch(`/api/todos/${id}/toggle`, {
+                        method: 'PUT'
+                    });
+
+                    if (response.ok) {
+                        this.loadTodos();
+                        this.loadStats();
+                        this.loadFolders();
+                    } else {
+                        throw new Error('Error updating task');
+                    }
+                } catch (error) {
+                    this.showNotification('Error updating task', 'error');
+                }
+            }
+
+            async deleteTodo(id) {
+                if (!confirm('Are you sure you want to delete this task?')) return;
+
+                try {
+                    const response = await fetch(`/api/todos/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        this.loadTodos();
+                        this.loadStats();
+                        this.loadFolders();
+                        this.showNotification('Task deleted successfully', 'success');
+                    } else {
+                        throw new Error('Error deleting task');
+                    }
+                } catch (error) {
+                    this.showNotification('Error deleting task', 'error');
+                }
+            }
+
+            async moveTodoToFolder(todoId, newFolderId) {
+                // Usar el endpoint PUT /api/todos/<id> con folder_id
+                try {
+                    const response = await fetch(`/api/todos/${todoId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ folder_id: parseInt(newFolderId) })
+                    });
+                    if (response.ok) {
+                        this.loadTodos();
+                        this.loadFolders();
+                        this.loadStats();
+                        this.showNotification('Task moved successfully', 'success');
+                    } else {
+                        throw new Error('Error moving task');
+                    }
+                } catch (error) {
+                    this.showNotification('Error moving task', 'error');
+                }
+            }
+
+            renderTodos() {
+                const container = document.getElementById('todos-container');
+                
+                if (this.todos.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h3>${translations[this.currentLanguage].empty.title}</h3>
+                            <p>${translations[this.currentLanguage].empty.message}</p>
+                        </div>
+                    `;
+                    this.updateDynamicTranslations();
+                    return;
+                }
+
+                container.innerHTML = this.todos.map(todo => this.renderTodoItem(todo)).join('');
+                this.updateDynamicTranslations();
+            }
+
+            renderTodoItem(todo) {
+                const priorityClass = `priority-${todo.priority}`;
+                const priorityText = {
+                    'high': translations[this.currentLanguage].priority.high,
+                    'medium': translations[this.currentLanguage].priority.medium,
+                    'low': translations[this.currentLanguage].priority.low
+                }[todo.priority];
+
+                const categoryText = {
+                    'work': translations[this.currentLanguage].categories.work,
+                    'personal': translations[this.currentLanguage].categories.personal,
+                    'study': translations[this.currentLanguage].categories.study,
+                    'health': translations[this.currentLanguage].categories.health,
+                    'general': translations[this.currentLanguage].categories.general
+                }[todo.category];
+
+                return `
+                    <div class="todo-item ${todo.completed ? 'completed' : ''} fade-in">
+                        <div class="todo-header">
+                            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                <div class="todo-title" title="${this.escapeHtml(todo.title)}">${this.escapeHtml(todo.title)}</div>
+                                ${todo.description ? `<div class="todo-description" title="${this.escapeHtml(todo.description)}">${this.escapeHtml(todo.description)}</div>` : ''}
+                                <div style="margin-top: 8px; position: relative;">
+                                    <button class="btn btn-sm btn-secondary move-folder-btn" data-todo-id="${todo.id}" style="font-size:0.95em; padding:4px 12px;">
+                                        <i class="fas fa-random"></i> ${translations[this.currentLanguage].folders.title}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button class="btn btn-sm ${todo.completed ? 'btn-secondary' : 'btn-success'}" 
+                                        onclick="todoApp.toggleTodo(${todo.id})">
+                                    <i class="fas ${todo.completed ? 'fa-undo' : 'fa-check'}"></i>
+                                    ${todo.completed ? translations[this.currentLanguage].actions.uncomplete : translations[this.currentLanguage].actions.complete}
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="todoApp.deleteTodo(${todo.id})">
+                                    <i class="fas fa-trash"></i>
+                                    ${translations[this.currentLanguage].actions.delete}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="todo-meta">
+                            <span class="priority-badge ${priorityClass}">${priorityText}</span>
+                            <span class="category-badge">${categoryText}</span>
+                            <span class="folder-badge" style="background-color: ${todo.folder_color}">${todo.folder_name}</span>
+                            <small style="color: #6c757d;">
+                                <i class="fas fa-clock"></i> 
+                                ${this.formatDate(todo.created_at)}
+                            </small>
+                        </div>
+                    </div>
+                `;
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString(this.currentLanguage === 'es' ? 'es-ES' : 'en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            showNotification(message, type = 'info') {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                container.appendChild(notification);
+                
+                // Show notification
+                setTimeout(() => notification.classList.add('show'), 100);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => container.removeChild(notification), 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize the app when the page loads
+        let todoApp;
+        document.addEventListener('DOMContentLoaded', () => {
+            todoApp = new TodoApp();
+        });
+    </script>
+</body>
+</html> 
