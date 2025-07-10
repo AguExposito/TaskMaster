@@ -1114,18 +1114,19 @@
                     this.loadTodos();
                 });
 
-                // Menú global para mover tarea entre folders
+                // Global menu for moving a task between folders
                 document.getElementById('todos-container').addEventListener('click', (e) => {
                     if (e.target.classList.contains('move-folder-btn')) {
                         const todoId = e.target.getAttribute('data-todo-id');
                         const btn = e.target;
-                        // Eliminar cualquier menú abierto
+                        // Remove any open menus
                         document.querySelectorAll('.move-folder-global-dropdown').forEach(d => d.remove());
-                        // Construir menú
+                        // Build the menu
                         const todo = this.todos.find(t => t.id == todoId);
                         const folders = this.folders.filter(f => f.id !== todo.folder_id);
                         const menu = document.createElement('div');
                         menu.className = 'move-folder-global-dropdown';
+                        menu.setAttribute('data-todo-id', todoId); // Store the todoId in the menu
                         if (folders.length === 0) {
                             menu.innerHTML = `<div style='padding:8px 18px; color:#aaa;'>${translations[this.currentLanguage].folders.title}</div>`;
                         } else {
@@ -1134,36 +1135,37 @@
                             ).join('');
                         }
                         document.body.appendChild(menu);
-                        // Posicionar menú
+                        // Position the menu
                         const rect = btn.getBoundingClientRect();
                         let top = rect.bottom + window.scrollY;
                         let left = rect.left + window.scrollX;
-                        // Si se sale por abajo, mostrar hacia arriba
+                        // If menu overflows bottom, show above
                         if (top + menu.offsetHeight > window.innerHeight + window.scrollY) {
                             top = rect.top + window.scrollY - menu.offsetHeight;
                         }
-                        // Si se sale por la derecha, ajustar
+                        // If menu overflows right, adjust
                         if (left + menu.offsetWidth > window.innerWidth + window.scrollX) {
                             left = window.innerWidth + window.scrollX - menu.offsetWidth - 10;
                         }
                         menu.style.top = top + 'px';
                         menu.style.left = left + 'px';
                     }
+                });
+                // Listen globally for clicks on move-folder-option
+                document.body.addEventListener('click', (e) => {
                     if (e.target.classList.contains('move-folder-option')) {
-                        const todoId = document.querySelector('.move-folder-global-dropdown').previousMenuBtnId;
+                        // Read the todoId directly from the parent menu
+                        const menu = e.target.closest('.move-folder-global-dropdown');
+                        const todoId = menu ? menu.getAttribute('data-todo-id') : null;
                         const newFolderId = e.target.getAttribute('data-folder-id');
-                        this.moveTodoToFolder(todoId, newFolderId);
+                        if (todoId && newFolderId) {
+                            this.moveTodoToFolder(todoId, newFolderId);
+                        }
                         document.querySelectorAll('.move-folder-global-dropdown').forEach(d => d.remove());
                         e.stopPropagation();
                     }
                 });
-                // Guardar referencia al botón para saber a qué tarea corresponde el menú
-                document.body.addEventListener('mousedown', (e) => {
-                    const menu = document.querySelector('.move-folder-global-dropdown');
-                    if (menu && e.target.classList.contains('move-folder-btn')) {
-                        menu.previousMenuBtnId = e.target.getAttribute('data-todo-id');
-                    }
-                });
+                // Removed previousMenuBtnId mousedown event, no longer needed
                 // Cerrar menú al hacer click fuera
                 document.body.addEventListener('mousedown', (e) => {
                     if (!e.target.classList.contains('move-folder-global-dropdown') && !e.target.classList.contains('move-folder-option') && !e.target.classList.contains('move-folder-btn')) {
@@ -1216,8 +1218,8 @@
                             <div style="width: ${percent}%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 6px;"></div>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95em;">
-                            <span title="${percent}% completado"><i class='fas fa-check-circle' style='color:#28a745;'></i> ${percent}%</span>
-                            <span title="${pending} pendientes"><i class='fas fa-tasks' style='color:#dc3545;'></i> ${pending}</span>
+                            <span title="${percent}% completed"><i class='fas fa-check-circle' style='color:#28a745;'></i> ${percent}%</span>
+                            <span title="${pending} pending"><i class='fas fa-tasks' style='color:#dc3545;'></i> ${pending}</span>
                         </div>
                         <div class="folder-count">${folder.todo_count} ${translations[this.currentLanguage].common.tasks}</div>
                         <div class="folder-actions">
