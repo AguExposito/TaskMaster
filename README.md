@@ -38,7 +38,7 @@
 
 1. **Download `TaskMaster.exe`**  
    No installer, no admin rights—just grab the file from the latest
-   [release](https://github.com/your-repo/TaskMaster/releases) and place it anywhere you like.
+   [release](https://github.com/AguExposito/TaskMaster/releases) and place it anywhere you like.
 
 2. **Run it**  
    Double-click `TaskMaster.exe`. A window appears instantly and a local SQLite
